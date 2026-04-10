@@ -1,22 +1,22 @@
+require('dotenv').config(); // This MUST be the first line
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const dotenv = require('dotenv');
-
-dotenv.config();
+const upload = require('./middleware/upload');
+const mediaController = require('./controllers/mediaController');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-app.use(helmet());
-app.use(cors()); 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+// Middleware
+app.use(cors());
+app.use(express.json());
 
+// Health Check (To verify the server is live in the browser)
 app.get('/', (req, res) => {
-    res.send("Welcome to the Backend API for Zolina1!") 
-    });
+    res.send('Zolina Backend API: Online 🚀');
+});
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-}); 
+// This is the route the Frontend (Albano) will call
+app.post('/api/upload', upload.single('image'), mediaController.uploadImage);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
