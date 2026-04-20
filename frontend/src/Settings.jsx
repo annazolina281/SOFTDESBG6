@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import AppLayout from './AppLayout'
+import { API } from './api'
 
 const PERIODS = [
   { key: '1week',   label: '1 Week' },
@@ -37,7 +38,7 @@ export default function Settings() {
   // Load barangays
   const loadBarangays = () => {
     setBrgyLoading(true)
-    fetch('/api/barangays')
+    fetch(API('/api/barangays'))
       .then(r => r.json())
       .then(d => { if (d.success) setBarangays(d.barangays) })
       .catch(() => {})
@@ -46,7 +47,7 @@ export default function Settings() {
 
   // Load alert history
   const loadAlertHistory = () => {
-    fetch('/api/alerts/history')
+    fetch(API('/api/alerts/history'))
       .then(r => r.json())
       .then(d => { if (d.success) setAlertHistory(d.history) })
       .catch(() => {})
@@ -54,7 +55,7 @@ export default function Settings() {
 
   // Load storage status
   const loadStorage = () => {
-    fetch('/api/storage/status')
+    fetch(API('/api/storage/status'))
       .then(r => r.json())
       .then(d => { if (d.success) setStorageStatus(d) })
       .catch(() => {})
@@ -87,7 +88,7 @@ export default function Settings() {
       return
     }
     try {
-      const res  = await fetch('/api/barangays', {
+      const res  = await fetch(API('/api/barangays'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBrgy)
@@ -115,7 +116,7 @@ export default function Settings() {
     if (downloadOnly) {
       // Direct CSV download
       try {
-        const res = await fetch('/api/alerts/download-csv', {
+        const res = await fetch(API('/api/alerts/download-csv'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ barangay: selectedBrgy, period: selectedPeriod })
@@ -140,7 +141,7 @@ export default function Settings() {
     }
 
     try {
-      const res  = await fetch('/api/alerts/generate', {
+      const res  = await fetch(API('/api/alerts/generate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

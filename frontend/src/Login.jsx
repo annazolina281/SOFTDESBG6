@@ -17,7 +17,7 @@ export default function Login() {
   return (
     <div style={{ minHeight: '100vh', background: '#0d0d0d', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: 380, background: '#111111', border: '1px solid #1a1a1a', borderRadius: 12, padding: '36px 32px' }}>
-        <h1 style={{ margin: '0 0 4px', fontSize: 22, fontWeight: 700, color: '#ffffff' }}>PotholeDetect</h1>
+        <h1 style={{ margin: '0 0 4px', fontSize: 22, fontWeight: 700, color: '#ffffff' }}>Pothole Detection System</h1>
         <p style={{ margin: '0 0 28px', fontSize: 14, color: '#6b7280' }}>Sign in to your account</p>
 
         {error && (

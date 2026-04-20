@@ -74,7 +74,11 @@ def upload_storage(file_bytes: bytes, filename: str, folder="images") -> str:
             path, file_bytes,
             file_options={"content-type": "image/jpeg", "upsert": "true"}
         )
-        return supabase.storage.from_(BUCKET).get_public_url(path)
+        # Build public URL manually — avoids get_public_url() format issues
+        # across different supabase-py versions
+        url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/{path}"
+        print(f"✅ Uploaded to storage: {url}")
+        return url
     except Exception as e:
         print(f"⚠️  Storage upload failed: {e}")
         return ""

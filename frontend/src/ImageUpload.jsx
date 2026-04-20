@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from './AppLayout'
+import { API } from './api'
 
 const SEV = { High: '#ef4444', Medium: '#f97316', Low: '#eab308' }
 
@@ -11,6 +13,7 @@ const BARANGAYS = [
 ]
 
 export default function ImageUpload() {
+  const navigate = useNavigate()
   const [dragOver,    setDragOver]    = useState(false)
   const [analyzing,   setAnalyzing]   = useState(false)
   const [potholes,    setPotholes]    = useState([])
@@ -74,7 +77,7 @@ export default function ImageUpload() {
       fd.append('file', file)
       // analyze only — no barangay/location yet, backend won't save
       fd.append('analyze_only', 'true')
-      const res  = await fetch('/api/pothole/detect', { method: 'POST', body: fd })
+      const res  = await fetch(API('/api/pothole/detect'), { method: 'POST', body: fd })
       if (!res.ok) throw new Error(`Server error ${res.status}`)
       const data = await res.json()
       if (data.success) {
@@ -100,11 +103,11 @@ export default function ImageUpload() {
       fd.append('barangay', barangay)
       fd.append('location', location)
       fd.append('analyze_only', 'false')
-      const res  = await fetch('/api/pothole/detect', { method: 'POST', body: fd })
+      const res  = await fetch(API('/api/pothole/detect'), { method: 'POST', body: fd })
       const data = await res.json()
       if (data.success) {
-        setSaveMsg({ ok: `Saved! ${data.potholes_detected} pothole(s) recorded to database.` })
         setShowSave(false)
+        setTimeout(() => navigate('/dashboard'), 1200)
       } else {
         setSaveMsg({ err: data.error || 'Save failed.' })
       }

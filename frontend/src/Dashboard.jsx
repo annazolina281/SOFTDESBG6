@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import AppLayout from './AppLayout'
+import { API } from './api'
 
 const PERIODS = [
   { key: '1week',   label: '1 Week'   },
@@ -22,14 +23,14 @@ export default function Dashboard() {
 
   // Quick stats
   useEffect(() => {
-    fetch('/api/stats/dashboard')
+    fetch(API('/api/stats/dashboard'))
       .then(r => r.json())
       .then(d => { if (d.success) setStats(d) })
       .catch(() => setError('Backend not reachable — make sure App.py is running'))
       .finally(() => setLoading(false))
 
     // Today's daily report
-    fetch('/api/reports/daily')
+    fetch(API('/api/reports/daily'))
       .then(r => r.json())
       .then(d => { if (d.success) setDaily(d) })
       .catch(() => {})
@@ -38,7 +39,7 @@ export default function Dashboard() {
   // History by period
   const loadHistory = useCallback(() => {
     setHLoading(true)
-    fetch(`/api/stats/history?period=${period}`)
+    fetch(API(`/api/stats/history?period=${period}`))
       .then(r => r.json())
       .then(d => { if (d.success) setHistory(d) })
       .catch(() => setError('Could not load history'))
@@ -49,7 +50,7 @@ export default function Dashboard() {
 
   const downloadDailyReport = () => {
     const today = new Date().toISOString().slice(0, 10)
-    window.open(`/api/reports/daily/download?date=${today}`, '_blank')
+    window.open(API(`/api/reports/daily/download?date=${today}`), '_blank')
   }
 
   // Bar chart
@@ -166,7 +167,7 @@ export default function Dashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #1f2937' }}>
-                    {['#','Time','Severity','Confidence','Barangay','Source','Image'].map(h => (
+                    {['#','Time','Severity','Confidence','Barangay','Source'].map(h => (
                       <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: '#6b7280', fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
@@ -186,12 +187,6 @@ export default function Dashboard() {
                       <td style={{ padding: '8px 10px', color: '#e5e7eb' }}>{r.confidence?.toFixed(1)}%</td>
                       <td style={{ padding: '8px 10px', color: '#e5e7eb' }}>{r.barangay || '—'}</td>
                       <td style={{ padding: '8px 10px', color: SRC[r.source] || '#9ca3af', textTransform: 'capitalize' }}>{r.source}</td>
-                      <td style={{ padding: '8px 10px' }}>
-                        {r.image_url
-                          ? <a href={r.image_url} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontSize: 11 }}>View</a>
-                          : <span style={{ color: '#374151', fontSize: 11 }}>—</span>
-                        }
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -295,6 +290,7 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
     </AppLayout>
   )
 }

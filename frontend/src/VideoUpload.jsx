@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from './AppLayout'
+import { API } from './api'
 
 const SEV = { High: '#ef4444', Medium: '#f97316', Low: '#eab308' }
 
@@ -19,6 +21,7 @@ const SAMPLES = [
 ]
 
 export default function VideoUpload() {
+  const navigate = useNavigate()
   const [tab,         setTab]         = useState('upload')
   const [videoURL,    setVideoURL]    = useState(null)
   const [videoFile,   setVideoFile]   = useState(null)
@@ -131,7 +134,7 @@ export default function VideoUpload() {
           const fd = new FormData()
           fd.append('file', blob, 'frame.jpg')
           fd.append('analyze_only', 'true')   // ← display only, never saves
-          const res  = await fetch('/api/pothole/detect', { method: 'POST', body: fd })
+          const res  = await fetch(API('/api/pothole/detect'), { method: 'POST', body: fd })
           const data = await res.json()
           const pots = data.potholes || []
           setLivePots(pots)
@@ -185,7 +188,7 @@ export default function VideoUpload() {
           const fd = new FormData()
           fd.append('file', blob, 'frame.jpg')
           fd.append('analyze_only', 'true')   // analyze only — user saves at the end
-          const res  = await fetch('/api/pothole/detect', { method: 'POST', body: fd })
+          const res  = await fetch(API('/api/pothole/detect'), { method: 'POST', body: fd })
           const data = await res.json()
           resolve({ time, potholes: data.potholes || [], imageURL })
         } catch { resolve({ time, potholes: [], imageURL }) }
@@ -266,11 +269,11 @@ export default function VideoUpload() {
       fd.append('file', videoFile)
       fd.append('barangay', barangay)
       fd.append('location', location)
-      const res  = await fetch('/api/pothole/detect-video', { method: 'POST', body: fd })
+      const res  = await fetch(API('/api/pothole/detect-video'), { method: 'POST', body: fd })
       const data = await res.json()
       if (data.success) {
-        setSaveMsg({ ok: `Saved! ${data.potholes_detected} detection(s) recorded to database.` })
         setShowSave(false)
+        setTimeout(() => navigate('/dashboard'), 1200)
       } else {
         setSaveMsg({ err: data.error || 'Save failed.' })
       }

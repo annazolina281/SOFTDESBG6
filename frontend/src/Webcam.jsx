@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from './AppLayout'
+import { API } from './api'
 
 const SEV = { High: '#ef4444', Medium: '#f97316', Low: '#eab308' }
 
@@ -11,6 +13,7 @@ const BARANGAYS = [
 ]
 
 export default function Webcam() {
+  const navigate = useNavigate()
   const [active,     setActive]     = useState(false)
   const [potholes,   setPotholes]   = useState([])
   const [log,        setLog]        = useState([])
@@ -65,7 +68,7 @@ export default function Webcam() {
         const fd = new FormData()
         fd.append('file', blob, 'frame.jpg')
         fd.append('analyze_only', 'true')   // display only — user decides to save on Stop
-        const res  = await fetch('/api/pothole/detect', { method: 'POST', body: fd })
+        const res  = await fetch(API('/api/pothole/detect'), { method: 'POST', body: fd })
         const data = await res.json()
         const found = data.potholes || []
         setPotholes(found)
@@ -123,12 +126,12 @@ export default function Webcam() {
         fd.append('barangay', barangay)
         fd.append('location', location)
         fd.append('analyze_only', 'false')
-        const res  = await fetch('/api/pothole/detect', { method: 'POST', body: fd })
+        const res  = await fetch(API('/api/pothole/detect'), { method: 'POST', body: fd })
         const data = await res.json()
         if (data.success) saved += data.potholes_detected || 0
       }
-      setSaveMsg({ ok: `Saved! ${saved} detection(s) from ${pendingFrames.length} frame(s) recorded.` })
       setShowSave(false)
+      setTimeout(() => navigate('/dashboard'), 1200)
       setPendingFrames([]); pendingRef.current = []
     } catch {
       setSaveMsg({ err: 'Network error — could not save.' })

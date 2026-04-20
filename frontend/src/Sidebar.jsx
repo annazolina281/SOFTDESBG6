@@ -19,9 +19,9 @@ export default function Sidebar() {
     }}>
       <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid #1a1a1a' }}>
         <div style={{ fontSize: 15, fontWeight: 700, color: '#ffffff', letterSpacing: '0.01em' }}>
-          PotholeDetect
+          Pothole Detection System
         </div>
-        <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2 }}>Road Analysis System</div>
+        <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2 }}>Road Infrastructure Monitoring</div>
       </div>
 
       <nav style={{ padding: '12px 8px', flex: 1 }}>
